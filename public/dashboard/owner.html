@@ -7,6 +7,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .tabs { display:flex; gap:0; margin:24px 0; border-bottom:2px solid var(--border); }
+    .tab { padding:12px 28px; cursor:pointer; border:none; background:none; color:var(--text-muted); font-size:.95rem; font-weight:500; border-bottom:2px solid transparent; margin-bottom:-2px; transition:.2s; }
+    .tab:hover { color:var(--text); }
+    .tab.active { color:var(--baby); border-bottom-color:var(--baby); }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    .file-list { margin-top:16px; }
+    .file-item { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--surface); border:1px solid var(--border); border-radius:8px; margin-bottom:8px; }
+    .file-item .info { font-size:.85rem; }
+    .file-item .info span { color:var(--text-muted); font-size:.78rem; }
+    .product-select { height:120px; }
+    .product-select option { padding:4px 8px; }
+    .inline-group { display:flex; gap:12px; align-items:end; flex-wrap:wrap; }
+    .inline-group .form-group { margin:0; }
+    .gen-results { margin-top:16px; max-height:300px; overflow-y:auto; }
+    .gen-results .key-item { font-family:monospace; font-size:.82rem; padding:4px 0; border-bottom:1px solid var(--border); }
+    .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:.72rem; font-weight:600; text-transform:uppercase; }
+    .badge-active { background:rgba(16,185,129,.15); color:var(--green); }
+    .badge-expired { background:rgba(248,113,113,.15); color:var(--red); }
+  </style>
 </head>
 <body>
 
@@ -22,67 +43,150 @@
     <div class="dash-header">
       <div>
         <h1>Owner Dashboard</h1>
-        <p>Manage license keys and view system statistics</p>
+        <p>Manage products, files, and license keys</p>
       </div>
       <button class="btn btn-outline btn-sm" onclick="logout()" style="color:var(--red);border-color:rgba(248,113,113,.3)">Logout</button>
     </div>
 
     <div class="stats-grid" id="stats-grid"></div>
 
-    <div class="dash-card fade-in">
-      <h3>🔑 Generate Keys</h3>
-      <form id="gen-form" style="display:grid;grid-template-columns:1fr 1fr 120px;gap:16px;align-items:end">
-        <div class="form-group" style="margin:0">
-          <label>Product</label>
-          <select id="gen-product" required>
-            <option value="Woofer">Woofer</option>
-            <option value="NOXY VGC">NOXY VGC</option>
-            <option value="Complete Bundle">Complete Bundle</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin:0">
-          <label>Duration</label>
-          <select id="gen-duration">
-            <option value="30">30 Days</option>
-            <option value="90">90 Days</option>
-            <option value="">Lifetime</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary" style="padding:12px 16px">Generate</button>
-      </form>
-      <div id="gen-result" style="margin-top:12px;display:none"></div>
+    <div class="tabs">
+      <button class="tab active" data-tab="keys">🔑 Keys</button>
+      <button class="tab" data-tab="products">📦 Products & Files</button>
     </div>
 
-    <div class="dash-card fade-in">
-      <h3>📋 All License Keys</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Product</th>
-              <th>User</th>
-              <th>Status</th>
-              <th>HWID</th>
-              <th>Created</th>
-              <th>Expires</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="keys-table"></tbody>
-        </table>
+    <!-- Keys Tab -->
+    <div class="tab-content active" id="tab-keys">
+      <div class="dash-card fade-in">
+        <h3>Generate Keys</h3>
+        <form id="gen-form">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px">
+            <div class="form-group" style="margin:0">
+              <label>Products <small>(Ctrl+click for multiple)</small></label>
+              <select id="gen-products" class="product-select" multiple required></select>
+            </div>
+            <div>
+              <div class="form-group" style="margin:0;margin-bottom:12px">
+                <label>Duration</label>
+                <select id="gen-duration">
+                  <option value="7">1 Week</option>
+                  <option value="14">2 Weeks</option>
+                  <option value="30">30 Days</option>
+                  <option value="90">90 Days</option>
+                  <option value="">Lifetime</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin:0;margin-bottom:12px;display:none" id="custom-days-group">
+                <label>Custom Days</label>
+                <input type="number" id="gen-custom-days" min="1" placeholder="Days">
+              </div>
+              <div class="form-group" style="margin:0">
+                <label>Quantity <small>(optional, default 1)</small></label>
+                <input type="number" id="gen-quantity" min="1" max="10000" placeholder="1" style="width:100px">
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Generate Keys</button>
+        </form>
+        <div id="gen-result" style="display:none"></div>
+      </div>
+
+      <div class="dash-card fade-in">
+        <h3>All License Keys <span id="key-count" style="font-weight:400;font-size:.85rem;color:var(--text-muted)"></span></h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Product</th>
+                <th>User</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Expires</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="keys-table"></tbody>
+          </table>
+        </div>
       </div>
     </div>
+
+    <!-- Products Tab -->
+    <div class="tab-content" id="tab-products">
+      <div class="dash-card fade-in">
+        <h3>Add Product</h3>
+        <form id="product-form" style="display:grid;grid-template-columns:1fr 1fr 1fr 100px;gap:12px;align-items:end">
+          <div class="form-group" style="margin:0"><label>Name (slug)</label><input type="text" id="prod-name" placeholder="woofer" required></div>
+          <div class="form-group" style="margin:0"><label>Display Name</label><input type="text" id="prod-display" placeholder="Woofer" required></div>
+          <div class="form-group" style="margin:0"><label>Price ($)</label><input type="number" id="prod-price" step="0.01" min="0" required></div>
+          <button type="submit" class="btn btn-primary" style="padding:12px 16px">Add</button>
+        </form>
+        <div style="margin-top:12px" id="product-list"></div>
+      </div>
+
+      <div class="dash-card fade-in">
+        <h3>Upload Product File</h3>
+        <form id="upload-form" enctype="multipart/form-data">
+          <div style="display:grid;grid-template-columns:1fr 1fr 120px 80px;gap:12px;align-items:end">
+            <div class="form-group" style="margin:0"><label>Product</label><select id="upload-product" required></select></div>
+            <div class="form-group" style="margin:0"><label>File (.sys, .exe)</label><input type="file" id="upload-file" required></div>
+            <div class="form-group" style="margin:0"><label>Version</label><input type="text" id="upload-version" placeholder="1.0"></div>
+            <div class="form-group" style="margin:0"><label>Expire (days)</label><input type="number" id="upload-expires" min="0" placeholder="none"></div>
+          </div>
+          <div style="margin-top:12px" class="inline-group">
+            <button type="submit" class="btn btn-primary">Upload</button>
+            <span id="upload-status" style="font-size:.85rem;color:var(--text-muted)"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="dash-card fade-in">
+        <h3>Product Files</h3>
+        <div id="file-list" class="file-list">
+          <p style="color:var(--text-muted);text-align:center;padding:24px">No files uploaded</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 <script src="/js/api.js"></script>
 <script>
-if (!isLoggedIn()) { window.location.href = '/login.html'; }
 
+if (!isLoggedIn()) { window.location.href = '/login.html'; }
 const user = getUser();
 if (user && user.role !== 'owner') { window.location.href = '/dashboard/customer.html'; }
+
+// ── Tabs ──
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Duration toggle ──
+
+document.getElementById('gen-duration').addEventListener('change', function() {
+  document.getElementById('custom-days-group').style.display = this.value === 'custom' ? 'block' : 'none';
+});
+
+// ── Helpers ──
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 2500);
+}
+
+// ── Stats ──
 
 async function loadStats() {
   try {
@@ -98,82 +202,190 @@ async function loadStats() {
   } catch (e) { showToast('Failed to load stats', 'error'); }
 }
 
+// ── Keys ──
+
 async function loadKeys() {
   try {
     const keys = await get('/api/keys/all');
     const tbody = document.getElementById('keys-table');
+    document.getElementById('key-count').textContent = `(${keys.length} total)`;
     if (!keys.length) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:32px">No keys generated yet</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px">No keys generated yet</td></tr>';
       return;
     }
     tbody.innerHTML = keys.map(k => {
-      const statusClass = `status-${k.status}`;
       const created = new Date(k.created_at).toLocaleDateString();
       const expires = k.expires_at ? new Date(k.expires_at).toLocaleDateString() : 'Lifetime';
-      return `
-        <tr>
-          <td style="font-family:monospace;font-size:.82rem">${k.key}</td>
-          <td>${k.product}</td>
-          <td>${k.assigned_user || '—'}</td>
-          <td><span class="status-badge ${statusClass}">${k.status}</span></td>
-          <td style="font-family:monospace;font-size:.78rem;color:var(--text-muted)">${k.hwid || '—'}</td>
-          <td>${created}</td>
-          <td>${expires}</td>
-          <td style="display:flex;gap:6px;align-items:center">
-            <select onchange="updateStatus(${k.id}, this.value)" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px 8px;font-size:.8rem">
-              <option value="unused" ${k.status==='unused'?'selected':''}>Unused</option>
-              <option value="active" ${k.status==='active'?'selected':''}>Active</option>
-              <option value="expired" ${k.status==='expired'?'selected':''}>Expired</option>
-              <option value="banned" ${k.status==='banned'?'selected':''}>Banned</option>
-            </select>
-            <button onclick="deleteKey(${k.id})" style="background:none;border:1px solid rgba(248,113,113,.3);color:var(--red);border-radius:6px;padding:4px 8px;font-size:.78rem;cursor:pointer">Delete</button>
-          </td>
-        </tr>
-      `;
+      return `<tr>
+        <td style="font-family:monospace;font-size:.82rem">${k.key}</td>
+        <td>${k.product}</td>
+        <td>${k.assigned_user || '—'}</td>
+        <td><span class="badge badge-${k.status === 'active' ? 'active' : 'expired'}">${k.status}</span></td>
+        <td>${created}</td>
+        <td>${expires}</td>
+        <td style="display:flex;gap:6px;align-items:center">
+          <select onchange="updateStatus(${k.id}, this.value)" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px 8px;font-size:.8rem">
+            <option value="unused" ${k.status==='unused'?'selected':''}>Unused</option>
+            <option value="active" ${k.status==='active'?'selected':''}>Active</option>
+            <option value="expired" ${k.status==='expired'?'selected':''}>Expired</option>
+            <option value="banned" ${k.status==='banned'?'selected':''}>Banned</option>
+          </select>
+          <button onclick="deleteKey(${k.id})" style="background:none;border:1px solid rgba(248,113,113,.3);color:var(--red);border-radius:6px;padding:4px 8px;font-size:.78rem;cursor:pointer">Delete</button>
+        </td>
+      </tr>`;
     }).join('');
   } catch (e) { showToast('Failed to load keys', 'error'); }
 }
 
 async function updateStatus(id, status) {
-  try {
-    await patch(`/api/keys/${id}/status`, { status });
-    showToast('Status updated');
-  } catch (e) { showToast(e.message, 'error'); }
+  try { await patch(`/api/keys/${id}/status`, { status }); showToast('Status updated'); } catch (e) { showToast(e.message, 'error'); }
 }
 
 async function deleteKey(id) {
   if (!confirm('Delete this key permanently?')) return;
+  try { await del(`/api/keys/${id}`); showToast('Key deleted'); loadKeys(); loadStats(); } catch (e) { showToast(e.message, 'error'); }
+}
+
+// ── Generate Keys ──
+
+async function loadProductSelects() {
   try {
-    await del(`/api/keys/${id}`);
-    showToast('Key deleted');
-    loadKeys();
-    loadStats();
-  } catch (e) { showToast(e.message, 'error'); }
+    const products = await get('/api/products/all');
+    const opts = products.map(p => `<option value="${p.name}">${p.display_name}</option>`).join('');
+    document.getElementById('gen-products').innerHTML = opts;
+    document.getElementById('upload-product').innerHTML = '<option value="">Select product</option>' + opts;
+  } catch (e) { showToast('Failed to load products', 'error'); }
 }
 
 document.getElementById('gen-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const product = document.getElementById('gen-product').value;
-  const duration = parseInt(document.getElementById('gen-duration').value) || null;
+  const sel = document.getElementById('gen-products');
+  const products = Array.from(sel.selectedOptions).map(o => o.value);
+  if (!products.length) { showToast('Select at least one product', 'error'); return; }
+
+  let durationDays = document.getElementById('gen-duration').value;
+  if (durationDays === 'custom') durationDays = document.getElementById('gen-custom-days').value;
+  const quantity = parseInt(document.getElementById('gen-quantity').value) || 1;
+
   const btn = e.target.querySelector('button');
   btn.innerHTML = '<span class="spinner"></span> Generating...';
   btn.disabled = true;
   try {
-    const data = await post('/api/keys/generate', { product, duration_days: duration, quantity: 1 });
+    const data = await post('/api/keys/generate', { products, duration_days: durationDays || null, quantity });
     const result = document.getElementById('gen-result');
     result.style.display = 'block';
-    result.innerHTML = `<div class="alert success">Generated: <strong style="font-family:monospace">${data.keys[0]}</strong></div>`;
-    loadKeys();
-    loadStats();
-  } catch (err) {
-    showToast(err.message, 'error');
-  }
-  btn.innerHTML = 'Generate';
+    result.innerHTML = `<div class="alert success">Generated <strong>${data.count}</strong> key(s) across ${products.length} product(s)</div>
+      <div class="gen-results">${data.keys.map(k => `<div class="key-item"><span class="badge badge-active">${k.product}</span> ${k.key}</div>`).join('')}</div>`;
+    loadKeys(); loadStats();
+  } catch (err) { showToast(err.message, 'error'); }
+  btn.innerHTML = 'Generate Keys';
   btn.disabled = false;
 });
 
+// ── Products ──
+
+document.getElementById('product-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('prod-name').value.trim();
+  const display = document.getElementById('prod-display').value.trim();
+  const price = document.getElementById('prod-price').value;
+  try {
+    await post('/api/products/create', { name, display_name: display, description: '', price: parseFloat(price), category: 'custom' });
+    showToast('Product added');
+    document.getElementById('prod-name').value = '';
+    document.getElementById('prod-display').value = '';
+    document.getElementById('prod-price').value = '';
+    loadProductSelects();
+    loadProducts();
+  } catch (e) { showToast(e.message, 'error'); }
+});
+
+async function loadProducts() {
+  try {
+    const products = await get('/api/products/all');
+    const list = document.getElementById('product-list');
+    if (!products.length) { list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:12px">No custom products</p>'; return; }
+    list.innerHTML = products.map(p => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;margin-bottom:6px">
+        <div><strong>${p.display_name}</strong> <span style="color:var(--text-muted);font-size:.8rem">(${p.name})</span></div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <span style="color:var(--baby)">$${parseFloat(p.price).toFixed(2)}</span>
+          <button onclick="deleteProduct(${p.id})" style="background:none;border:1px solid rgba(248,113,113,.3);color:var(--red);border-radius:6px;padding:4px 8px;font-size:.78rem;cursor:pointer">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {}
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Delete this product? Keys using it will remain.')) return;
+  try { await post('/api/products/delete', { id }); showToast('Product deleted'); loadProductSelects(); loadProducts(); } catch (e) { showToast(e.message, 'error'); }
+}
+
+// ── File Upload ──
+
+document.getElementById('upload-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('upload-file');
+  if (!fileInput.files.length) { showToast('Select a file', 'error'); return; }
+
+  const status = document.getElementById('upload-status');
+  status.textContent = 'Uploading...';
+
+  const formData = new FormData();
+  formData.append('file', fileInput.files[0]);
+  formData.append('product', document.getElementById('upload-product').value);
+  formData.append('version', document.getElementById('upload-version').value);
+  formData.append('expires_days', document.getElementById('upload-expires').value || '');
+
+  try {
+    const token = getToken();
+    const resp = await fetch('/api/products/files/upload', {
+      method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData,
+    });
+    const data = await resp.json();
+    if (!resp.ok) { showToast(data.error || 'Upload failed', 'error'); status.textContent = ''; return; }
+    showToast(`Uploaded ${data.filename} (${(data.size / 1024).toFixed(1)} KB)`);
+    status.textContent = '';
+    fileInput.value = '';
+    loadFiles();
+  } catch (e) { showToast('Upload failed', 'error'); status.textContent = ''; }
+});
+
+// ── Files ──
+
+async function loadFiles() {
+  try {
+    const files = await get('/api/products/files');
+    const list = document.getElementById('file-list');
+    if (!files.length) { list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:24px">No files uploaded</p>'; return; }
+    list.innerHTML = files.map(f => {
+      const expires = f.expires_at ? new Date(f.expires_at).toLocaleDateString() : 'Never';
+      const expired = f.expires_at && new Date(f.expires_at) < new Date();
+      return `<div class="file-item">
+        <div class="info"><strong>${f.filename}</strong> — ${f.product} ${f.version ? 'v' + f.version : ''}<br>
+          <span>${(f.file_size / 1024).toFixed(1)} KB · Expires: ${expires} ${expired ? '<span style="color:var(--red)">(EXPIRED)</span>' : ''}</span></div>
+        <div style="display:flex;gap:6px">
+          <a href="/api/products/files/${f.id}/download" class="btn btn-sm btn-primary" style="text-decoration:none;padding:4px 12px;font-size:.78rem">Download</a>
+          <button onclick="deleteFile(${f.id})" style="background:none;border:1px solid rgba(248,113,113,.3);color:var(--red);border-radius:6px;padding:4px 8px;font-size:.78rem;cursor:pointer">Delete</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) { showToast('Failed to load files', 'error'); }
+}
+
+async function deleteFile(id) {
+  if (!confirm('Delete this file?')) return;
+  try { await del(`/api/products/files/${id}`); showToast('File deleted'); loadFiles(); } catch (e) { showToast(e.message, 'error'); }
+}
+
+// ── Init ──
+
 loadStats();
 loadKeys();
+loadProductSelects();
+loadProducts();
+loadFiles();
 </script>
 </body>
 </html>

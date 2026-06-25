@@ -231,16 +231,19 @@ async function handleRequest(context) {
 
   if (path === 'keys/generate' && method === 'POST') {
     const err = requireOwner(); if (err) return err;
-    const { product, duration_days, quantity = 1 } = await getBody(request);
-    if (!product) return error('Product name required');
+    const { products: rawProducts, duration_days, quantity = 1 } = await getBody(request);
+    if (!rawProducts || (Array.isArray(rawProducts) && rawProducts.length === 0)) return error('At least one product required');
+    if (!Array.isArray(rawProducts)) return error('products must be an array');
 
-    const keys = [];
-    for (let i = 0; i < quantity; i++) {
-      const k = generateKey();
-      await qRun(db, 'INSERT INTO license_keys (key, product, duration_days, status) VALUES (?, ?, ?, ?)', [k, product, duration_days || null, 'unused']);
-      keys.push(k);
+    const allKeys = [];
+    for (const product of rawProducts) {
+      for (let i = 0; i < quantity; i++) {
+        const k = generateKey();
+        await qRun(db, 'INSERT INTO license_keys (key, product, duration_days, status) VALUES (?, ?, ?, ?)', [k, product, duration_days || null, 'unused']);
+        allKeys.push({ key: k, product });
+      }
     }
-    return json({ keys, count: keys.length, product }, 201);
+    return json({ keys: allKeys, count: allKeys.length }, 201);
   }
 
   if (path === 'keys/my-keys' && method === 'GET') {
@@ -309,6 +312,103 @@ async function handleRequest(context) {
     const keys = await qAll(db, 'SELECT product, status FROM license_keys WHERE user_id = ? AND status = ?', [user.id, 'active']);
     const products = [...new Set(keys.map(k => k.product))];
     return json({ available: products.length > 0, products });
+  }
+
+  // ─── PRODUCT MANAGEMENT ───
+
+  if (path === 'products/all' && method === 'GET') {
+    const err = requireOwner(); if (err) return err;
+    const products = await qAll(db, 'SELECT id, name, display_name, description, price, category FROM products ORDER BY name');
+    return json(products);
+  }
+
+  if (path === 'products/create' && method === 'POST') {
+    const err = requireOwner(); if (err) return err;
+    const { name, display_name, description, price, category } = await getBody(request);
+    if (!name || !display_name || !price) return error('name, display_name, and price required');
+    const existing = await qOne(db, 'SELECT id FROM products WHERE name = ?', [name]);
+    if (existing) return error('Product already exists', 409);
+    await qRun(db, 'INSERT INTO products (name, display_name, description, price, category) VALUES (?, ?, ?, ?, ?)', [name, display_name, description || '', parseFloat(price), category || 'custom']);
+    return json({ ok: true }, 201);
+  }
+
+  if (path === 'products/delete' && method === 'POST') {
+    const err = requireOwner(); if (err) return err;
+    const { id } = await getBody(request);
+    if (!id) return error('id required');
+    await qRun(db, 'DELETE FROM products WHERE id = ?', [id]);
+    return json({ ok: true });
+  }
+
+  // ─── PRODUCT FILES ───
+
+  if (path === 'products/files' && method === 'GET') {
+    const err = requireOwner(); if (err) return err;
+    const files = await qAll(db, 'SELECT id, product, filename, file_size, version, created_at, expires_at FROM product_files ORDER BY created_at DESC');
+    return json(files);
+  }
+
+  if (path === 'products/files/upload' && method === 'POST') {
+    const err = requireOwner(); if (err) return err;
+    const form = await request.formData();
+    const file = form.get('file');
+    const product = form.get('product');
+    const version = form.get('version') || '';
+    const expiresDays = form.get('expires_days');
+    if (!file || !product) return error('file and product required');
+    const buf = await file.arrayBuffer();
+    const data = new Uint8Array(buf);
+    const expiresAt = expiresDays ? new Date(Date.now() + parseInt(expiresDays) * 86400000).toISOString() : null;
+    await qRun(db, 'INSERT INTO product_files (product, filename, file_data, file_size, version, expires_at) VALUES (?, ?, ?, ?, ?, ?)',
+      [product, file.name, data, data.length, version, expiresAt]);
+    return json({ ok: true, filename: file.name, size: data.length }, 201);
+  }
+
+  if (method === 'GET') {
+    const fileDownloadMatch = path.match(/^products\/files\/(\d+)\/download$/);
+    if (fileDownloadMatch) {
+      const record = await qOne(db, 'SELECT * FROM product_files WHERE id = ?', [fileDownloadMatch[1]]);
+      if (!record) return error('File not found', 404);
+      if (record.expires_at && new Date(record.expires_at) < new Date()) return error('File has expired', 410);
+      if (!record.file_data) return error('File data not available', 404);
+      return new Response(record.file_data, {
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename="${record.filename}"`,
+          'Content-Length': record.file_size,
+          'Cache-Control': 'private, max-age=3600',
+        },
+      });
+    }
+  }
+
+  if (path.match(/^products\/files\//) && method === 'DELETE') {
+    const err = requireOwner(); if (err) return err;
+    const id = path.split('/').pop();
+    await qRun(db, 'DELETE FROM product_files WHERE id = ?', [id]);
+    return json({ ok: true });
+  }
+
+  // ─── LICENSE VALIDATION (for product clients) ───
+
+  if (path === 'validate-key' && method === 'POST') {
+    const { key, product } = await getBody(request);
+    if (!key) return error('License key required');
+
+    const license = await qOne(db, 'SELECT * FROM license_keys WHERE key = ?', [key]);
+    if (!license) return json({ valid: false, error: 'Invalid license key' });
+    if (license.status !== 'active') return json({ valid: false, error: 'License key is ' + license.status });
+
+    if (product && license.product !== product) {
+      return json({ valid: false, error: 'Key is not valid for this product' });
+    }
+
+    if (license.expires_at) {
+      const exp = new Date(license.expires_at + 'Z');
+      if (exp < new Date()) return json({ valid: false, error: 'License key has expired' });
+    }
+
+    return json({ valid: true, product: license.product, expires_at: license.expires_at });
   }
 
   // ─── 404 ───

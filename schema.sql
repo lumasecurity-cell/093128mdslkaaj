@@ -30,3 +30,15 @@ CREATE TABLE IF NOT EXISTS products (
   duration_days INTEGER,
   category TEXT
 );
+
+CREATE TABLE IF NOT EXISTS product_files (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  product TEXT NOT NULL,
+  filename TEXT NOT NULL,
+  file_data BLOB,
+  file_url TEXT,
+  file_size INTEGER NOT NULL DEFAULT 0,
+  version TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  expires_at TEXT
+);
