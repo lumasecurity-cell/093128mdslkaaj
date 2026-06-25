@@ -5,7 +5,4 @@ pages_build_output_dir = "public"
 [vars]
 JWT_SECRET = "change-this-in-production"
 
-[[d1_databases]]
-binding = "DB"
-database_name = "sleepy-ud-db"
-database_id = ""  # <-- Set this after creating the D1 database in Cloudflare dashboard
+# D1 binding is set via Cloudflare Pages dashboard (Settings → Functions → D1 bindings)
