@@ -14,6 +14,7 @@ async function request(method, path, body) {
 function get(path) { return request('GET', path); }
 function post(path, body) { return request('POST', path, body); }
 function patch(path, body) { return request('PATCH', path, body); }
+function del(path) { return request('DELETE', path); }
 
 function isLoggedIn() { return !!localStorage.getItem('token'); }
 

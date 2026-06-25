@@ -278,6 +278,14 @@ async function handleRequest(context) {
     return json({ ok: true });
   }
 
+  // DELETE /api/keys/:id
+  const keyDeleteMatch = path.match(/^keys\/(\d+)$/);
+  if (keyDeleteMatch && method === 'DELETE') {
+    const err = requireOwner(); if (err) return err;
+    await qRun(db, 'DELETE FROM license_keys WHERE id = ?', [keyDeleteMatch[1]]);
+    return json({ ok: true });
+  }
+
   // ─── CUSTOMER ROUTES ───
 
   if (path === 'customer/profile' && method === 'GET') {
