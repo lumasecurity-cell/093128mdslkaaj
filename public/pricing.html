@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — Sleepy UD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="logo">Sleepy UD</a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/pricing.html" class="active">Pricing</a></li>
+      <li><a href="/login.html" class="nav-cta">Dashboard</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="section" style="padding-top:120px">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Choose Your Plan</h2>
+      <p>Select the product that fits your needs. All licenses are delivered instantly after purchase.</p>
+    </div>
+    <div class="pricing-grid" id="product-grid"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Sleepy UD &copy; 2026. All rights reserved.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="/js/api.js"></script>
+<script>
+async function loadProducts() {
+  try {
+    const products = await get('/api/customer/products');
+    const grid = document.getElementById('product-grid');
+    grid.innerHTML = products.map((p, i) => {
+      const isBundle = p.name.toLowerCase().includes('bundle');
+      return `
+        <div class="pricing-card fade-in ${isBundle ? 'featured' : ''}">
+          <div class="pricing-name">${p.name}</div>
+          <div class="pricing-desc">${p.description || ''}</div>
+          <div class="pricing-price">$${p.price.toFixed(2)} <span>${p.duration_days ? `/${p.duration_days}d` : 'lifetime'}</span></div>
+          <ul class="pricing-features">
+            <li>Instant delivery</li>
+            <li>${p.duration_days ? `${p.duration_days}-day license` : 'Lifetime license'}</li>
+            <li>Priority support</li>
+            <li>Free updates</li>
+          </ul>
+          <a href="/login.html" class="btn btn-primary btn-block">Get Started</a>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    document.getElementById('product-grid').innerHTML = '<p style="color:var(--text-muted);text-align:center">Unable to load products. Please check back later.</p>';
+  }
+}
+loadProducts();
+</script>
+</body>
+</html>

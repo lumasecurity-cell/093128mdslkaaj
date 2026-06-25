@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Sleepy UD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="logo">Sleepy UD</a>
+    <ul class="nav-links" id="nav-links"></ul>
+  </div>
+</nav>
+
+<div class="dashboard">
+  <div class="container">
+
+    <div class="dash-header">
+      <div>
+        <h1>Customer Dashboard</h1>
+        <p id="welcome-text">Welcome back</p>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="logout()" style="color:var(--red);border-color:rgba(248,113,113,.3)">Logout</button>
+    </div>
+
+    <div class="dash-card fade-in">
+      <h3>👤 Account Info</h3>
+      <div id="account-info" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px"></div>
+    </div>
+
+    <div class="dash-card fade-in">
+      <h3>🔑 Your License Keys</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Product</th>
+              <th>Status</th>
+              <th>Activated</th>
+              <th>Expires</th>
+            </tr>
+          </thead>
+          <tbody id="keys-table"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('redeem-section').classList.toggle('d-none')">+ Redeem Key</button>
+        <div id="redeem-section" class="d-none" style="margin-top:12px">
+          <form id="redeem-form" style="display:flex;gap:12px;align-items:end">
+            <div class="form-group" style="margin:0;flex:1">
+              <label>License Key</label>
+              <input type="text" id="redeem-key" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="white-space:nowrap">Redeem</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card fade-in">
+      <h3>📥 Product Downloads</h3>
+      <div id="downloads-section"></div>
+    </div>
+
+    <div class="placeholder-card fade-in">
+      <h3>💬 Support & Updates</h3>
+      <p>Support channel and product update notifications will be available here soon.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/js/api.js"></script>
+<script>
+if (!isLoggedIn()) { window.location.href = '/login.html'; }
+
+const user = getUser();
+
+async function loadProfile() {
+  try {
+    const profile = await get('/api/customer/profile');
+    const info = document.getElementById('account-info');
+
+    if (profile.keyLogin) {
+      document.getElementById('welcome-text').textContent = `Logged in via key — ${profile.license.product}`;
+      info.innerHTML = `
+        <div><strong>Product</strong><br><span style="color:var(--text-muted)">${profile.license.product}</span></div>
+        <div><strong>Status</strong><br><span class="status-badge status-${profile.license.status}">${profile.license.status}</span></div>
+        <div><strong>Activated</strong><br><span style="color:var(--text-muted)">${profile.license.activated_at ? new Date(profile.license.activated_at).toLocaleDateString() : '—'}</span></div>
+        <div><strong>Expires</strong><br><span style="color:var(--text-muted)">${profile.license.expires_at ? new Date(profile.license.expires_at).toLocaleDateString() : 'Lifetime'}</span></div>
+      `;
+    } else {
+      document.getElementById('welcome-text').textContent = `Signed in as ${profile.username}`;
+      info.innerHTML = `
+        <div><strong>Username</strong><br><span style="color:var(--text-muted)">${profile.username}</span></div>
+        <div><strong>Email</strong><br><span style="color:var(--text-muted)">${profile.email}</span></div>
+        <div><strong>Role</strong><br><span style="color:var(--text-muted)">${profile.role}</span></div>
+        <div><strong>Member since</strong><br><span style="color:var(--text-muted)">${new Date(profile.created_at).toLocaleDateString()}</span></div>
+        <div><strong>Last login</strong><br><span style="color:var(--text-muted)">${profile.last_login ? new Date(profile.last_login).toLocaleDateString() : 'First time'}</span></div>
+      `;
+    }
+  } catch (e) { showToast('Failed to load profile', 'error'); }
+}
+
+async function loadKeys() {
+  try {
+    const keys = await get('/api/keys/my-keys');
+    const tbody = document.getElementById('keys-table');
+    if (!keys.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px">No keys on this account yet. Redeem one below.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = keys.map(k => {
+      const sc = `status-${k.status}`;
+      return `
+        <tr>
+          <td style="font-family:monospace;font-size:.82rem">${k.key}</td>
+          <td>${k.product}</td>
+          <td><span class="status-badge ${sc}">${k.status}</span></td>
+          <td>${k.activated_at ? new Date(k.activated_at).toLocaleDateString() : '—'}</td>
+          <td>${k.expires_at ? new Date(k.expires_at).toLocaleDateString() : 'Lifetime'}</td>
+        </tr>
+      `;
+    }).join('');
+  } catch (e) { showToast('Failed to load keys', 'error'); }
+}
+
+async function loadDownloads() {
+  try {
+    const d = await get('/api/customer/downloads');
+    const section = document.getElementById('downloads-section');
+    if (d.available) {
+      section.innerHTML = `
+        <p style="color:var(--text-muted);margin-bottom:12px">You have active licenses for: <strong>${d.products.join(', ')}</strong></p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="#" class="btn btn-outline btn-sm">Download Woofer</a>
+          <a href="#" class="btn btn-outline btn-sm">Download NOXY VGC</a>
+          <a href="#" class="btn btn-outline btn-sm">View Instructions</a>
+        </div>
+      `;
+    } else {
+      section.innerHTML = '<p style="color:var(--text-muted)">No active product licenses found. Purchase or redeem a key to access downloads.</p>';
+    }
+  } catch (e) { section.innerHTML = '<p style="color:var(--text-muted)">Downloads not available yet.</p>'; }
+}
+
+document.getElementById('redeem-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const key = document.getElementById('redeem-key').value;
+  const btn = e.target.querySelector('button');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+  try {
+    await post('/api/keys/redeem', { key });
+    showToast('Key redeemed successfully!');
+    document.getElementById('redeem-key').value = '';
+    document.getElementById('redeem-section').classList.add('d-none');
+    loadKeys();
+    loadDownloads();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+  btn.innerHTML = 'Redeem';
+  btn.disabled = false;
+});
+
+loadProfile();
+loadKeys();
+loadDownloads();
+</script>
+</body>
+</html>
