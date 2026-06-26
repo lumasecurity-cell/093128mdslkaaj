@@ -33,20 +33,20 @@ export async function onRequest(context) {
         const body = await request.json();
         const amount = Math.min(Math.max(parseInt(body.amount) || 1, 1), 100);
         const duration = parseInt(body.duration) || 30;
-        const lifetime = body.lifetime === true;
+        const expiry = body.expiry;
 
         const raw = await env.SLEEPY_KV.get("keys", "json");
         const keys = raw || [];
 
         const now = Date.now();
-        const expiryDate = lifetime ? null : now + duration * 86400000;
+        const expiryDate = expiry ? new Date(expiry + "T23:59:59Z").getTime() : now + duration * 86400000;
 
         for (let i = 0; i < amount; i++) {
             keys.push({
                 key: generateKey(),
                 created: now,
                 expires: expiryDate,
-                duration: lifetime ? -1 : duration
+                duration: duration
             });
         }
 
