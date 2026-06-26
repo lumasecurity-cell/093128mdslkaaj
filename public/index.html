@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sleepy.ud</title>
+    <meta name="description" content="sleepy.ud — premium utility software for Rivals.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lunar: { 50: '#f0f7fe', 100: '#dceefe', 200: '#baddfd', 300: '#91c8f5', 400: '#5fadf0', 500: '#3a92e9', 600: '#2477db', 700: '#1d62b9', 800: '#1d5096', 900: '#1d4479', 950: '#0a142e' },
+                        midnight: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#312e81', 900: '#0f0f23', 950: '#050512' },
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-soft': 'pulse-soft 3s ease-in-out infinite',
+                        'twinkle': 'twinkle 3s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        'pulse-soft': { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.4' } },
+                        twinkle: { '0%': { opacity: '0.2', transform: 'scale(0.8)' }, '100%': { opacity: '1', transform: 'scale(1.2)' } },
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-midnight-950 text-white font-sans antialiased overflow-x-hidden">
+
+    <!-- Ambient BG layers -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(145,200,245,0.06),transparent_70%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_0%_50%,rgba(145,200,245,0.03),transparent_60%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_100%_50%,rgba(145,200,245,0.03),transparent_60%)]"></div>
+        <div class="moon-glow"></div>
+        <div id="stars" class="absolute inset-0"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-midnight-950/80 backdrop-blur-xl border-b border-white/[0.04]">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#" class="text-xl font-extrabold tracking-tight">sleepy<span class="text-lunar-300">.ud</span></a>
+            <div class="flex items-center gap-8">
+                <a href="#features" class="text-sm font-medium text-white/50 hover:text-white transition-colors hidden sm:block">features</a>
+                <a href="#faq" class="text-sm font-medium text-white/50 hover:text-white transition-colors hidden sm:block">faq</a>
+                <a href="#purchase" class="bg-lunar-300 text-midnight-950 px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-lunar-200 transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(145,200,245,0.3)]">get access</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="relative z-10 min-h-screen flex items-center pt-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lunar-300/10 border border-lunar-300/20 text-xs font-semibold text-lunar-300 uppercase tracking-widest mb-6">
+                    <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 animate-pulse-soft"></span>
+                    now available for rivals
+                </div>
+                <h1 class="text-[clamp(3rem,8vw,5.5rem)] font-black leading-[1.05] tracking-tighter mb-5">
+                    built different.<br>
+                    <span class="text-lunar-300">sleepy.ud</span>
+                </h1>
+                <p class="text-lg text-white/50 max-w-xl leading-relaxed mb-10">
+                    A premium utility suite for Rivals — meticulously crafted for performance, reliability, and an uncompromised experience.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#purchase" class="inline-flex items-center gap-2 bg-lunar-300 text-midnight-950 font-bold px-8 py-4 rounded-xl text-base hover:bg-lunar-200 transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(145,200,245,0.35)]">
+                        get access
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <a href="#features" class="inline-flex items-center gap-2 bg-transparent text-white font-semibold px-8 py-4 rounded-xl text-base border border-white/10 hover:border-lunar-300/30 hover:bg-lunar-300/5 transition-all">
+                        explore features
+                    </a>
+                </div>
+
+                <!-- Stats -->
+                <div class="flex gap-12 mt-14 pt-10 border-t border-white/[0.06]">
+                    <div>
+                        <h3 class="text-3xl font-extrabold text-lunar-300">50+</h3>
+                        <p class="text-xs text-white/40 uppercase tracking-wider mt-1">features</p>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-extrabold text-lunar-300">24/7</h3>
+                        <p class="text-xs text-white/40 uppercase tracking-wider mt-1">updates</p>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-extrabold text-lunar-300">undetected</h3>
+                        <p class="text-xs text-white/40 uppercase tracking-wider mt-1">proven track record</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="relative z-10 py-32">
+        <div class="max-w-6xl mx-auto px-6">
+            <p class="text-xs font-semibold text-lunar-300 uppercase tracking-[0.2em] mb-3">features</p>
+            <h2 class="text-[clamp(2rem,4vw,3rem)] font-extrabold tracking-tight mb-4">everything you need,<br>nothing you don't.</h2>
+            <p class="text-white/50 max-w-lg text-lg">A comprehensive toolkit built from the ground up for Rivals. Every system is designed for precision, stability, and ease of use.</p>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-16">
+                <div class="group feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="text-lg font-bold mb-2">aimbot & silent aim</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Configurable targeting with smooth aim, silent aim, FOV circle, visibility checks, and advanced prediction with ping compensation.</p>
+                </div>
+                <div class="group feature-card">
+                    <div class="feature-icon">👁️</div>
+                    <h3 class="text-lg font-bold mb-2">full ESP suite</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">2D boxes, skeleton, health bars, tracers, chams, name tags, distance — with custom colors and per-player configuration.</p>
+                </div>
+                <div class="group feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3 class="text-lg font-bold mb-2">anti-aim & movement</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Dynamic yaw/pitch/roll manipulation, underground, head-backwards, fly, noclip, slide boost, and velocity-based walkspeed control.</p>
+                </div>
+                <div class="group feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="text-lg font-bold mb-2">visual customization</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Skybox changer with 30+ presets, custom lighting, bloom control, aspect ratio override, atmosphere editing, and world textures.</p>
+                </div>
+                <div class="group feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="text-lg font-bold mb-2">combat systems</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Ragebot with voidspam/csync, hit notifications with 7 animation styles, hitmarkers, kill sounds, and katana anti-deflect.</p>
+                </div>
+                <div class="group feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3 class="text-lg font-bold mb-2">quality of life</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Auto queue, weapon skin changer, profile spoofing, mod detector, anti-flashbang, device spoof, and auto ban queue.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-dive: Aimbot -->
+    <div class="relative z-10">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center py-20 border-t border-white/[0.04]">
+                <div>
+                    <p class="text-xs font-semibold text-lunar-300 uppercase tracking-[0.2em] mb-3">precision</p>
+                    <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-extrabold tracking-tight mb-4">advanced targeting<br>& prediction engine</h2>
+                    <p class="text-white/50 leading-relaxed">Multi-mode targeting with automatic weapon detection, per-weapon configuration, and bullet travel prediction that accounts for ping and velocity multipliers.</p>
+                    <ul class="mt-6 space-y-3">
+                        <li class="flex items-start gap-3 text-[15px] text-white/60">
+                            <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 mt-2 shrink-0"></span>
+                            closest-to-mouse & nearest-player targeting
+                        </li>
+                        <li class="flex items-start gap-3 text-[15px] text-white/60">
+                            <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 mt-2 shrink-0"></span>
+                            configurable smoothing and visibility checks
+                        </li>
+                        <li class="flex items-start gap-3 text-[15px] text-white/60">
+                            <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 mt-2 shrink-0"></span>
+                            bullet prediction with velocity, travel time, and ping
+                        </li>
+                        <li class="flex items-start gap-3 text-[15px] text-white/60">
+                            <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 mt-2 shrink-0"></span>
+                            auto-target mode with dynamic switching
+                        </li>
+                    </ul>
+                </div>
+                <div class="mock-panel">
+                    <div class="mock-header">
+                        <span class="mock-brand">sleepy.ud</span>
+                        <span class="text-white/50 text-xs font-medium">combat</span>
+                    </div>
+                    <div class="mock-bar accent w-3/5"></div>
+                    <div class="mock-bar muted w-2/5"></div>
+                    <div class="grid grid-cols-2 gap-1.5 mt-2">
+                        <div class="mock-bar h-6"></div>
+                        <div class="mock-bar h-6"></div>
+                        <div class="mock-bar h-6"></div>
+                        <div class="mock-bar h-6 accent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deep-dive: ESP -->
+    <div class="relative z-10">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center py-20 border-t border-white/[0.04]">
+                <div class="lg:order-2">
+                    <p class="text-xs font-semibold text-lunar-300 uppercase tracking-[0.2em] mb-3">awareness</p>
+                    <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-extrabold tracking-tight mb-4">full environmental<br>& player ESP</h2>
+                    <p class="text-white/50 leading-relaxed">See everything that matters. Players, equipment, grenades, and utility items are all rendered with clean, customizable visuals that give you complete situational awareness.</p>
+                    <ul class="mt-6 space-y-3">
+                        <li class="flex items-start gap-3 text-[15px] text-white/60">
+                            <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 mt-2 shrink-0"></span>
+                            2D boxes, skeleton, health bars, and name tags
+                        </li>
+                        <li class="flex items-start gap-3 text-[15px] text-white/60">
+                            <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 mt-2 shrink-0"></span>
+                            tracers with attachment-based beam rendering
+                        </li>
+                        <li class="flex items-start gap-3 text-[15px] text-white/60">
+                            <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 mt-2 shrink-0"></span>
+                            utility ESP for grenades, tripmines, and more
+                        </li>
+                        <li class="flex items-start gap-3 text-[15px] text-white/60">
+                            <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 mt-2 shrink-0"></span>
+                            chams with outline and fill color control
+                        </li>
+                    </ul>
+                </div>
+                <div class="mock-panel">
+                    <div class="mock-header">
+                        <span class="mock-brand">sleepy.ud</span>
+                        <span class="text-white/50 text-xs font-medium">esp</span>
+                    </div>
+                    <div class="mock-bar accent w-3/5"></div>
+                    <div class="mock-bar muted w-2/5"></div>
+                    <div class="grid grid-cols-2 gap-1.5 mt-2">
+                        <div class="mock-bar h-6"></div>
+                        <div class="mock-bar h-6 accent"></div>
+                        <div class="mock-bar h-6"></div>
+                        <div class="mock-bar h-6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <section id="faq" class="relative z-10 py-32">
+        <div class="max-w-6xl mx-auto px-6">
+            <p class="text-xs font-semibold text-lunar-300 uppercase tracking-[0.2em] mb-3 text-center">faq</p>
+            <h2 class="text-[clamp(2rem,4vw,3rem)] font-extrabold tracking-tight mb-4 text-center">frequently asked<br>questions.</h2>
+            <div class="max-w-2xl mx-auto mt-12 space-y-3">
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        is sleepy.ud undetected?
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>Yes. We maintain a strict development cycle focused on detection avoidance. Our update pipeline ensures rapid responses to any anti-cheat changes.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        what executor do i need?
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>sleepy.ud is compatible with modern Roblox executors that support the Drawing API, getgenv(), and gethui(). Full compatibility details are available after purchase.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        how do i get updates?
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>All updates are distributed through our Discord server. Active members receive instant notifications and changelogs for every release.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        is there a refund policy?
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>We do not offer refunds on digital products. We recommend joining our Discord to review community feedback and feature demonstrations before purchasing.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        can i use this on alts?
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>Licensing restrictions apply. Check the #rules channel in our Discord for the most up-to-date policy on alternate account usage.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Purchase -->
+    <section id="purchase" class="relative z-10 py-20">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(145,200,245,0.05),transparent_70%)] pointer-events-none"></div>
+        <div class="max-w-lg mx-auto px-6 text-center relative">
+            <div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl px-8 py-16 sm:px-14">
+                <h2 class="text-3xl font-extrabold tracking-tight mb-3">get started</h2>
+                <p class="text-white/50 mb-8">Join our community and gain instant access to sleepy.ud. Purchase includes lifetime updates and priority support.</p>
+                <a href="https://discord.gg/TCBTRcnvDa" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 bg-[#5865F2] text-white font-bold px-10 py-4 rounded-xl text-base hover:bg-[#6b77f5] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(88,101,242,0.35)]">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                    purchase via discord
+                </a>
+                <p class="text-xs text-white/30 mt-4">clicking above will open our Discord server where you can complete your purchase</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-white/[0.04] py-8 text-center">
+        <p class="text-xs text-white/20">sleepy.ud &mdash; not affiliated with Roblox Corporation. all rights reserved.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
