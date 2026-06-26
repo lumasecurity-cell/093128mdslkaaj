@@ -43,6 +43,7 @@
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_100%_50%,rgba(145,200,245,0.03),transparent_60%)]"></div>
         <div class="moon-glow"></div>
         <div id="stars" class="absolute inset-0"></div>
+        <div class="shooting-stars" id="shootingStars"></div>
     </div>
 
     <!-- Nav -->
@@ -60,7 +61,7 @@
     <!-- Hero -->
     <section class="relative z-10 min-h-screen flex items-center pt-20">
         <div class="max-w-6xl mx-auto px-6 w-full">
-            <div class="max-w-3xl">
+            <div class="max-w-3xl hero-content">
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lunar-300/10 border border-lunar-300/20 text-xs font-semibold text-lunar-300 uppercase tracking-widest mb-6">
                     <span class="w-1.5 h-1.5 rounded-full bg-lunar-300 animate-pulse-soft"></span>
                     now available for rivals
@@ -110,32 +111,32 @@
 
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-16">
                 <div class="group feature-card">
-                    <div class="feature-icon">🎯</div>
+                    <div class="feature-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#91c8f5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="#91c8f5"/></svg></div>
                     <h3 class="text-lg font-bold mb-2">aimbot & silent aim</h3>
                     <p class="text-sm text-white/50 leading-relaxed">Configurable targeting with smooth aim, silent aim, FOV circle, visibility checks, and advanced prediction with ping compensation.</p>
                 </div>
                 <div class="group feature-card">
-                    <div class="feature-icon">👁️</div>
+                    <div class="feature-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#91c8f5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
                     <h3 class="text-lg font-bold mb-2">full ESP suite</h3>
                     <p class="text-sm text-white/50 leading-relaxed">2D boxes, skeleton, health bars, tracers, chams, name tags, distance — with custom colors and per-player configuration.</p>
                 </div>
                 <div class="group feature-card">
-                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#91c8f5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
                     <h3 class="text-lg font-bold mb-2">anti-aim & movement</h3>
                     <p class="text-sm text-white/50 leading-relaxed">Dynamic yaw/pitch/roll manipulation, underground, head-backwards, fly, noclip, slide boost, and velocity-based walkspeed control.</p>
                 </div>
                 <div class="group feature-card">
-                    <div class="feature-icon">🎨</div>
+                    <div class="feature-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#91c8f5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="0.5" fill="#91c8f5"/><circle cx="17.5" cy="10.5" r="0.5" fill="#91c8f5"/><circle cx="8.5" cy="7.5" r="0.5" fill="#91c8f5"/><circle cx="6.5" cy="12.5" r="0.5" fill="#91c8f5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.27-.302-.437-.703-.437-1.125 0-.926.746-1.688 1.688-1.688h1.688c3.592 0 6.5-2.908 6.5-6.5C22 5.5 17.5 2 12 2z"/></svg></div>
                     <h3 class="text-lg font-bold mb-2">visual customization</h3>
                     <p class="text-sm text-white/50 leading-relaxed">Skybox changer with 30+ presets, custom lighting, bloom control, aspect ratio override, atmosphere editing, and world textures.</p>
                 </div>
                 <div class="group feature-card">
-                    <div class="feature-icon">⚡</div>
+                    <div class="feature-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#91c8f5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
                     <h3 class="text-lg font-bold mb-2">combat systems</h3>
                     <p class="text-sm text-white/50 leading-relaxed">Ragebot with voidspam/csync, hit notifications with 7 animation styles, hitmarkers, kill sounds, and katana anti-deflect.</p>
                 </div>
                 <div class="group feature-card">
-                    <div class="feature-icon">🔧</div>
+                    <div class="feature-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#91c8f5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
                     <h3 class="text-lg font-bold mb-2">quality of life</h3>
                     <p class="text-sm text-white/50 leading-relaxed">Auto queue, weapon skin changer, profile spoofing, mod detector, anti-flashbang, device spoof, and auto ban queue.</p>
                 </div>
@@ -235,46 +236,96 @@
 
     <!-- FAQ -->
     <section id="faq" class="relative z-10 py-32">
-        <div class="max-w-6xl mx-auto px-6">
+        <div class="max-w-3xl mx-auto px-6">
             <p class="text-xs font-semibold text-lunar-300 uppercase tracking-[0.2em] mb-3 text-center">faq</p>
-            <h2 class="text-[clamp(2rem,4vw,3rem)] font-extrabold tracking-tight mb-4 text-center">frequently asked<br>questions.</h2>
-            <div class="max-w-2xl mx-auto mt-12 space-y-3">
+            <h2 class="text-[clamp(2rem,4vw,3rem)] font-extrabold tracking-tight mb-3 text-center">Frequently Asked Questions</h2>
+            <p class="text-white/50 text-center max-w-xl mx-auto mb-12 text-lg">Everything you need to know before purchasing Sleepy UD.</p>
+
+            <div class="space-y-3">
+
                 <div class="faq-item">
                     <button class="faq-q" onclick="toggleFaq(this)">
-                        is sleepy.ud undetected?
+                        How do I purchase?
                         <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
-                    <div class="faq-a"><p>Yes. We maintain a strict development cycle focused on detection avoidance. Our update pipeline ensures rapid responses to any anti-cheat changes.</p></div>
+                    <div class="faq-a"><p>Open <strong>#purchase</strong> and tell me what you'd like to purchase along with your preferred payment method.</p></div>
                 </div>
+
                 <div class="faq-item">
                     <button class="faq-q" onclick="toggleFaq(this)">
-                        what executor do i need?
+                        Payment Methods
                         <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
-                    <div class="faq-a"><p>sleepy.ud is compatible with modern Roblox executors that support the Drawing API, getgenv(), and gethui(). Full compatibility details are available after purchase.</p></div>
+                    <div class="faq-a"><p>Sleepy currently accepts PayPal. You can also buy a PayPal Gift Card using another payment method.</p></div>
                 </div>
+
                 <div class="faq-item">
                     <button class="faq-q" onclick="toggleFaq(this)">
-                        how do i get updates?
+                        Response Time
                         <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
-                    <div class="faq-a"><p>All updates are distributed through our Discord server. Active members receive instant notifications and changelogs for every release.</p></div>
+                    <div class="faq-a"><p>I'm running this service on my own. If I don't respond immediately, I may be sleeping, working, at school, or away from my PC.</p></div>
                 </div>
+
                 <div class="faq-item">
                     <button class="faq-q" onclick="toggleFaq(this)">
-                        is there a refund policy?
+                        Can I negotiate?
                         <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
-                    <div class="faq-a"><p>We do not offer refunds on digital products. We recommend joining our Discord to review community feedback and feature demonstrations before purchasing.</p></div>
+                    <div class="faq-a"><p>Sometimes. Discounts may be discussed for bulk purchases and reseller orders.</p></div>
                 </div>
+
                 <div class="faq-item">
                     <button class="faq-q" onclick="toggleFaq(this)">
-                        can i use this on alts?
+                        Wrong Payment Amount
                         <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
-                    <div class="faq-a"><p>Licensing restrictions apply. Check the #rules channel in our Discord for the most up-to-date policy on alternate account usage.</p></div>
+                    <div class="faq-a"><p>Please send the exact amount. Orders remain pending until the full balance has been received.</p></div>
                 </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        24-Hour Warranty
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>Every purchase includes a 24-hour warranty. It covers software or license issues, but not user error, misuse, modifications, or license sharing.</p></div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Refund Policy
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>All sales are final unless otherwise agreed upon before the purchase.</p></div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Invite & Referral Rewards
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>Open <strong>#purchase</strong> after meeting the requirements. Rewards are issued once everything has been verified.</p></div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Valid Invites
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>Only genuine users count. Fake accounts, alternate accounts, or reward abuse will result in disqualification.</p></div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Need More Help?
+                        <svg class="faq-chevron w-3 h-3 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="faq-a"><p>Open <strong>#purchase</strong> and I'll get back to you as soon as I'm available.</p></div>
+                </div>
+
             </div>
+
+            <p class="text-center text-sm text-white/30 mt-10">Sleepy UD &mdash; FAQ</p>
         </div>
     </section>
 
