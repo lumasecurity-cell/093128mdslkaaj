@@ -1,2 +1,6 @@
 name = "sleepy-ud"
 pages_build_output_dir = "public"
+
+[[kv_namespaces]]
+binding = "SLEEPY_KV"
+id = "replace-with-your-kv-namespace-id"
