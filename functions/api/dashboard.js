@@ -77,9 +77,11 @@ textarea:focus{border-color:rgba(145,200,245,0.3)}
                 <label class="text-xs font-medium text-white/40 uppercase tracking-wider mb-1.5 block">duration (days)</label>
                 <input type="number" id="keyDuration" value="30" min="1" class="key-input w-28">
             </div>
-            <div>
-                <label class="text-xs font-medium text-white/40 uppercase tracking-wider mb-1.5 block">expiry date</label>
-                <input type="date" id="keyExpiry" class="key-input w-40">
+            <div class="flex items-end pb-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="keyLifetime" class="w-4 h-4 accent-lunar-300">
+                    <span class="text-xs font-medium text-white/40 uppercase tracking-wider">lifetime</span>
+                </label>
             </div>
             <button class="btn btn-primary" onclick="generateKeys()">generate keys</button>
         </div>
@@ -113,12 +115,10 @@ textarea:focus{border-color:rgba(145,200,245,0.3)}
 <script>
 const TOKEN = new URLSearchParams(window.location.search).get("token") || "";
 
-// Set default expiry to 30 days from now
-document.getElementById("keyExpiry").valueAsDate = (() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 30);
-    return d;
-})();
+// Lifetime checkbox disables duration
+document.getElementById("keyLifetime").addEventListener("change", function() {
+    document.getElementById("keyDuration").disabled = this.checked;
+});
 
 // Tab switching
 document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -152,9 +152,11 @@ async function loadKeys() {
         wrap.innerHTML = '<table><thead><tr><th>key</th><th>created</th><th>expires</th><th>status</th><th></th></tr></thead><tbody>' +
             data.keys.map(k => {
                 const now = Date.now();
-                const exp = new Date(k.expires).getTime();
-                const status = exp > now ? '<span class="badge badge-active">active</span>' : '<span class="badge badge-expired">expired</span>';
-                return '<tr><td style="font-family:monospace;font-size:12px;letter-spacing:0.5px">' + k.key + '</td><td>' + new Date(k.created).toLocaleDateString() + '</td><td>' + new Date(k.expires).toLocaleDateString() + '</td><td>' + status + '</td><td><button class="btn btn-danger text-xs px-3 py-1.5" onclick="deleteKey(\'' + k.key + '\')">delete</button></td></tr>';
+                const isLifetime = !k.expires;
+                const exp = isLifetime ? Infinity : new Date(k.expires).getTime();
+                const status = isLifetime ? '<span class="badge badge-active" style="background:rgba(145,200,245,0.1);color:#91c8f5">lifetime</span>' : (exp > now ? '<span class="badge badge-active">active</span>' : '<span class="badge badge-expired">expired</span>');
+                const expiresCell = isLifetime ? '<span style="color:rgba(255,255,255,0.3)">—</span>' : new Date(k.expires).toLocaleDateString();
+                return '<tr><td style="font-family:monospace;font-size:12px;letter-spacing:0.5px">' + k.key + '</td><td>' + new Date(k.created).toLocaleDateString() + '</td><td>' + expiresCell + '</td><td>' + status + '</td><td><button class="btn btn-danger text-xs px-3 py-1.5" onclick="deleteKey(\'' + k.key + '\')">delete</button></td></tr>';
             }).join('') + '</tbody></table>';
     } catch (e) {
         wrap.innerHTML = '<div class="p-8 text-center text-sm text-red-400">failed to load keys</div>';
@@ -166,12 +168,12 @@ async function generateKeys() {
     btn.classList.add("loading");
     const amount = document.getElementById("keyAmount").value;
     const duration = document.getElementById("keyDuration").value;
-    const expiry = document.getElementById("keyExpiry").value;
+    const lifetime = document.getElementById("keyLifetime").checked;
     try {
         const res = await fetch("/api/keys?token=" + TOKEN, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount: parseInt(amount), duration: parseInt(duration), expiry })
+            body: JSON.stringify({ amount: parseInt(amount), duration: parseInt(duration), lifetime })
         });
         const data = await res.json();
         if (data.success) {

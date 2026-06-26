@@ -1,4 +1,4 @@
-import { verifyToken, unauthorized } from "../_utils/auth.js";
+import { verifyToken, unauthorized } from "../../_utils/auth.js";
 
 // Basic Lua obfuscator — strips comments, renames locals, encodes strings
 function obfuscateLua(source) {
@@ -41,7 +41,7 @@ function obfuscateLua(source) {
         if (s.length < 3) return m;
         const encoded = [];
         for (let i = 0; i < s.length; i++) {
-            encoded.push(string.byte(s[i]));
+            encoded.push(s.charCodeAt(i));
         }
         return "(function() local s='';for _,c in ipairs({" + encoded.join(",") + "}) do s=s..string.char(c) end;return s end)()";
     });
