@@ -1,50 +1,39 @@
-// Stars
-(function generateStars() {
+// Falling stars
+(function fallingStars() {
     const container = document.getElementById('stars');
     if (!container) return;
-    for (let i = 0; i < 200; i++) {
+    const COUNT = 120;
+    for (let i = 0; i < COUNT; i++) {
         const star = document.createElement('div');
         star.className = 'star';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.setProperty('--d', (2 + Math.random() * 4) + 's');
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
         const size = 1 + Math.random() * 2;
+        const duration = 8 + Math.random() * 20;
+        const delay = Math.random() * duration * -1;
+        const drift = (Math.random() - 0.5) * 120;
+        const maxOp = 0.2 + Math.random() * 0.5;
+        star.style.left = x + '%';
+        star.style.top = y + '%';
         star.style.width = size + 'px';
         star.style.height = size + 'px';
+        star.style.setProperty('--drift', drift);
+        star.style.setProperty('--max-opacity', maxOp);
+        star.style.animationDuration = duration + 's';
+        star.style.animationDelay = delay + 's';
         container.appendChild(star);
     }
 })();
 
-// Shooting stars
-(function shootingStars() {
-    const container = document.getElementById('shootingStars');
-    if (!container) return;
-    function spawn() {
-        const el = document.createElement('div');
-        el.className = 'shooting-star';
-        el.style.top = (5 + Math.random() * 20) + '%';
-        el.style.right = '0';
-        el.style.setProperty('--dur', (1.2 + Math.random() * 1.2) + 's');
-        el.style.width = (50 + Math.random() * 80) + 'px';
-        container.appendChild(el);
-        setTimeout(() => el.remove(), 3000);
-    }
-    setInterval(spawn, 2000 + Math.random() * 4000);
-    // Spawn one immediately
-    setTimeout(spawn, 500);
-})();
-
-// FAQ toggle — global so inline onclick works
+// FAQ toggle
 window.toggleFaq = function(btn) {
     const item = btn.parentElement;
     const wasActive = item.classList.contains('active');
-
     document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
-
     if (!wasActive) item.classList.add('active');
 };
 
-// Smooth scroll for anchor links
+// Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         const target = document.querySelector(this.getAttribute('href'));
@@ -58,26 +47,18 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // DOM ready
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Hero entrance — stagger children
+    // Hero entrance
     const heroContent = document.querySelector('.hero-content');
     if (heroContent) {
-        const children = heroContent.children;
-        for (let i = 0; i < children.length; i++) {
-            children[i].classList.add('hero-fade-in');
+        for (let i = 0; i < heroContent.children.length; i++) {
+            heroContent.children[i].classList.add('hero-fade-in');
         }
     }
 
-    // Navbar shrink on scroll
+    // Navbar shrink
     const nav = document.querySelector('nav');
-    let lastScroll = 0;
     window.addEventListener('scroll', function() {
-        const scrollY = window.scrollY;
-        if (scrollY > 80) {
-            nav.classList.add('nav-scrolled');
-        } else {
-            nav.classList.remove('nav-scrolled');
-        }
-        lastScroll = scrollY;
+        nav.classList.toggle('nav-scrolled', window.scrollY > 80);
     });
 
     // Counter animation for stats
@@ -93,11 +74,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (!isNaN(num)) {
                             el.textContent = '0';
                             const target = num;
-                            const duration = 1200;
+                            const duration = 1000;
                             const start = performance.now();
                             function update(now) {
-                                const elapsed = now - start;
-                                const progress = Math.min(elapsed / duration, 1);
+                                const progress = Math.min((now - start) / duration, 1);
                                 const eased = 1 - Math.pow(1 - progress, 3);
                                 el.textContent = Math.floor(eased * target) + '+';
                                 if (progress < 1) requestAnimationFrame(update);
@@ -112,13 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
         counterObserver.observe(statsSection);
     }
 
-    // Section entrance reveals
+    // Section reveals
     const revealEls = document.querySelectorAll('.feature-row, #features, #faq, #purchase');
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
+            if (entry.isIntersecting) entry.target.classList.add('visible');
         });
     }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
 
@@ -127,22 +105,11 @@ document.addEventListener('DOMContentLoaded', function() {
         revealObserver.observe(el);
     });
 
-    // Feature card mouse tracking glow
+    // Feature card fade-in
     const cards = document.querySelectorAll('.feature-card');
-    cards.forEach(card => {
-        card.addEventListener('mousemove', function(e) {
-            const rect = this.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            this.style.setProperty('--mx', x + '%');
-            this.style.setProperty('--my', y + '%');
-        });
-    });
-
-    // Feature card fade-in (staggered)
     if (cards.length) {
         const cardObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
+            entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
@@ -152,21 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         cards.forEach((card, i) => {
             card.style.opacity = '0';
-            card.style.transform = 'translateY(24px)';
-            card.style.transition = `opacity 0.7s ease ${i * 0.07}s, transform 0.7s ease ${i * 0.07}s`;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = `opacity 0.6s ease ${i * 0.06}s, transform 0.6s ease ${i * 0.06}s`;
             cardObserver.observe(card);
         });
-    }
-
-    // Purchase card border glow pulse
-    const purchaseCard = document.querySelector('#purchase .bg-white\\/\\[0\\.02\\]');
-    if (purchaseCard) {
-        setInterval(() => {
-            purchaseCard.style.transition = 'border-color 2s ease';
-            purchaseCard.style.borderColor = 'rgba(145, 200, 245, 0.15)';
-            setTimeout(() => {
-                purchaseCard.style.borderColor = 'rgba(145, 200, 245, 0.04)';
-            }, 2000);
-        }, 4000);
     }
 });
